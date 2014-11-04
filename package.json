@@ -1,0 +1,27 @@
+{
+  "name": "significant-stream",
+  "version": "0.0.0",
+  "description": "Stream where only significant changes are pushed through",
+  "main": "significant-stream.js",
+  "dependencies": {
+    "diff-match-patch": "^1.0.0",
+    "through2": "^0.6.3"
+  },
+  "devDependencies": {
+    "concat-stream": "^1.4.6",
+    "tape": "^3.0.1"
+  },
+  "scripts": {
+    "test": "tape test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/micnews/significant-stream"
+  },
+  "author": "David Björklund <david.bjorklund@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/micnews/significant-stream/issues"
+  },
+  "homepage": "https://github.com/micnews/significant-stream"
+}
