@@ -1,9 +1,10 @@
-var merge = require('./lib/merge')
+var createMerge = require('./lib/merge')
 
   , through = require('through2')
 
-  , createSignificantStream = function () {
-      var buffer = []
+  , createSignificantStream = function (options) {
+      var merge = createMerge(options)
+        , buffer = []
         , write = function (obj, _, callback) {
             buffer.push(obj)
             buffer = merge(buffer)

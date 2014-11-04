@@ -4,8 +4,8 @@ var concat = require('concat-stream')
   , createStream = require('./significant-stream')
 
   , runTest = function (input, callback) {
-      var stream = createStream({ key: 'body' })
-      stream.pipe(concat(callback))
+      var stream = createStream()
+      stream.pipe(concat({ encoding: 'object' }, callback))
       input.forEach(function (data) { stream.write(data) })
       stream.end()
     }
@@ -18,7 +18,7 @@ test('empty', function (t) {
 })
 
 test('one revision', function (t) {
-  var inputs = [ { body: 'Hello, world', date: new Date(0) } ]
+  var inputs = [ 'Hello, world', ]
 
   runTest(inputs, function (actual) {
     t.deepEqual(actual, inputs)
@@ -28,9 +28,9 @@ test('one revision', function (t) {
 
 test('multiple compatible actual', function (t) {
   var inputs = [
-          { body: 'Hello', date: new Date(0) }
-        , { body: 'Hello, world', date: new Date(1000) }
-        , { body: 'Hello, world!', date: new Date(2000) }
+          'Hello'
+        , 'Hello, world'
+        , 'Hello, world!'
       ]
 
   runTest(inputs, function (actual) {
@@ -41,9 +41,9 @@ test('multiple compatible actual', function (t) {
 
 test('more complex, but compatible actual', function (t) {
   var inputs = [
-          { body: 'Hello', date: new Date(0) }
-        , { body: 'world!', date: new Date(1000) }
-        , { body: 'Hello, world!', date: new Date(2000)}
+          'Hello'
+        , 'world!'
+        , 'Hello, world!'
       ]
 
   runTest(inputs, function (actual) {
@@ -54,8 +54,8 @@ test('more complex, but compatible actual', function (t) {
 
 test('removing', function (t) {
   var inputs = [
-          { body: 'Hello, world!', date: new Date(0) }
-        , { body: 'Hello', date: new Date(1000) }
+          'Hello, world!'
+        , 'Hello'
       ]
 
   runTest(inputs, function (actual) {
@@ -66,9 +66,9 @@ test('removing', function (t) {
 
 test('multiple deletes', function (t) {
   var inputs = [
-          { body: 'Hello, world!', date: new Date(0) }
-        , { body: 'Hello, world', date: new Date(1000) }
-        , { body: 'Hello', date: new Date(2000) }
+          'Hello, world!'
+        , 'Hello, world'
+        , 'Hello'
       ]
 
   runTest(inputs, function (actual) {
@@ -79,11 +79,11 @@ test('multiple deletes', function (t) {
 
 test('deletes & inserts', function (t) {
   var inputs = [
-          { body: 'beep boop', date: new Date(0)}
-        , { body: 'Hello, world!', date: new Date(1000) }
-        , { body: 'Hello, world', date: new Date(2000) }
-        , { body: 'Hello', date: new Date(3000) }
-        , { body: 'Hello2', date: new Date(4000)}
+          'beep boop'
+        , 'Hello, world!'
+        , 'Hello, world'
+        , 'Hello'
+        , 'Hello2'
       ]
 
   runTest(inputs, function (actual) {
@@ -94,9 +94,9 @@ test('deletes & inserts', function (t) {
 
 test('multiple ends with remove', function (t) {
   var inputs = [
-          { body: 'Hello', date: new Date(0) }
-        , { body: 'Foo', date: new Date(1000) }
-        , { body: '', date: new Date(2000) }
+          'Hello'
+        , 'Foo'
+        , ''
       ]
 
   runTest(inputs, function (actual) {
@@ -107,8 +107,8 @@ test('multiple ends with remove', function (t) {
 
 test('unchanged', function (t) {
   var inputs = [
-          { body: 'Hello', date: new Date(0) }
-        , { body: 'Hello', date: new Date(1000) }
+          'Hello'
+        , 'Hello'
       ]
 
   runTest(inputs, function (actual) {
@@ -119,15 +119,28 @@ test('unchanged', function (t) {
 
 test('lots of inputs', function (t) {
   var inputs = [
-          { body: 'Hello', date: new Date(0) }
-        , { body: 'Hello', date: new Date(1000)}
-        , { body: 'Hello, world!', date: new Date(2000) }
-        , { body: 'foo', date: new Date(3000) }
-        , { body: 'foobar', date: new Date(4000) }
+          'Hello'
+        , 'Hello'
+        , 'Hello, world!'
+        , 'foo'
+        , 'foobar'
       ]
 
   runTest(inputs, function (actual) {
     t.deepEqual(actual, [ inputs[2], inputs[4] ])
     t.end()
   })
+})
+
+test('object as input', function (t) {
+  var input = [ { data: 'hej' }, { data: 'hejhopp' } ]
+    , stream = createStream({ key: 'data' })
+
+  stream.pipe(concat({ encoding: 'object' }, function (array) {
+    t.deepEqual(array, [ input[1] ])
+    t.end()
+  }))
+
+  input.forEach(function (row) { stream.write(row) })
+  stream.end()
 })
