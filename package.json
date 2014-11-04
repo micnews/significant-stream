@@ -1,6 +1,6 @@
 {
   "name": "significant-stream",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Stream where only significant changes are pushed through",
   "main": "significant-stream.js",
   "dependencies": {
