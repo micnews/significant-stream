@@ -1,4 +1,4 @@
-# significant-stream
+# significant-stream[![build status](https://secure.travis-ci.org/micnews/significant-stream.svg)](http://travis-ci.org/micnews/significant-stream)
 
 Stream where only significant changes are pushed through
 
