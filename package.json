@@ -9,6 +9,7 @@
     "through2": "^0.6.3"
   },
   "devDependencies": {
+    "async-benchmark": "^1.0.1",
     "concat-stream": "^1.4.6",
     "tape": "^3.0.1"
   },
