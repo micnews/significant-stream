@@ -1,6 +1,6 @@
 var concat = require('concat-stream')
   , test = require('tape')
- 
+
   , createStream = require('./significant-stream')
 
   , runTest = function (input, callback) {
@@ -135,6 +135,19 @@ test('lots of inputs', function (t) {
 test('object as input', function (t) {
   var input = [ { data: 'hej' }, { data: 'hejhopp' } ]
     , stream = createStream({ key: 'data' })
+
+  stream.pipe(concat({ encoding: 'object' }, function (array) {
+    t.deepEqual(array, [ input[1] ])
+    t.end()
+  }))
+
+  input.forEach(function (row) { stream.write(row) })
+  stream.end()
+})
+
+test('with cache', function (t) {
+  var input = [ 'beep', 'beep boop' ]
+    , stream = createStream({ cache: { max: 500 } })
 
   stream.pipe(concat({ encoding: 'object' }, function (array) {
     t.deepEqual(array, [ input[1] ])
